@@ -61,7 +61,7 @@ def main():
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
-        max_num_hands=2,
+        max_num_hands=1,
         min_detection_confidence=min_detection_confidence,
         min_tracking_confidence=min_tracking_confidence,
     )
@@ -71,14 +71,14 @@ def main():
     point_history_classifier = PointHistoryClassifier()
 
     # Read labels ###########################################################
-    with open(r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\keypoint_classifier\keypoint_classifier_label.csv',
+    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [
             row[0] for row in keypoint_classifier_labels
         ]
     with open(
-            r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\point_history_classifier\point_history_classifier_label.csv',
+            'model/point_history_classifier/point_history_classifier_label.csv',
             encoding='utf-8-sig') as f:
         point_history_classifier_labels = csv.reader(f)
         point_history_classifier_labels = [
@@ -183,11 +183,8 @@ def main():
 
 def select_mode(key, mode):
     number = -1
-    if ord('0') <= key <= ord('9'):  # Numeric keys '0' to '9'
-        number = key - ord('0')
-    elif ord('A') <= key <= ord('Z'):  # Alphabetic keys 'A' to 'Z'
-        number = key - ord('A') + 10  # Map 'A' to 10, 'B' to 11, ..., 'Z' to 35
-    
+    if 48 <= key <= 57:  # 0 ~ 9
+        number = key - 48
     if key == 110:  # n
         mode = 0
     if key == 107:  # k
@@ -196,20 +193,6 @@ def select_mode(key, mode):
         mode = 2
     return number, mode
 
-def logging_csv(number, mode, landmark_list, point_history_list):
-    if mode == 0:
-        pass
-    if mode == 1 and (0 <= number <= 35):  # Increased range to support a-z
-        csv_path = r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\keypoint_classifier\keypoint.csv'
-        with open(csv_path, 'a', newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([number, *landmark_list])
-    if mode == 2 and (0 <= number <= 35):  # Increased range to support a-z
-        csv_path = r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\point_history_classifier\point_history.csv'
-        with open(csv_path, 'a', newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow([number, *point_history_list])
-    return
 
 def calc_bounding_rect(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]
@@ -295,20 +278,20 @@ def pre_process_point_history(image, point_history):
     return temp_point_history
 
 
-# def logging_csv(number, mode, landmark_list, point_history_list):
-#     if mode == 0:
-#         pass
-#     if mode == 1 and (0 <= number <= 9):
-#         csv_path = r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\keypoint_classifier\keypoint.csv'
-#         with open(csv_path, 'a', newline="") as f:
-#             writer = csv.writer(f)
-#             writer.writerow([number, *landmark_list])
-#     if mode == 2 and (0 <= number <= 9):
-#         csv_path = r'C:\Users\manda\Downloads\hand-gesture-recognition-mediapipe-main\hand-gesture-recognition-mediapipe-main\model\point_history_classifier\point_history.csv'
-#         with open(csv_path, 'a', newline="") as f:
-#             writer = csv.writer(f)
-#             writer.writerow([number, *point_history_list])
-#     return
+def logging_csv(number, mode, landmark_list, point_history_list):
+    if mode == 0:
+        pass
+    if mode == 1 and (0 <= number <= 9):
+        csv_path = 'model/keypoint_classifier/keypoint.csv'
+        with open(csv_path, 'a', newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([number, *landmark_list])
+    if mode == 2 and (0 <= number <= 9):
+        csv_path = 'model/point_history_classifier/point_history.csv'
+        with open(csv_path, 'a', newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([number, *point_history_list])
+    return
 
 
 def draw_landmarks(image, landmark_point):
